@@ -1,9 +1,11 @@
 import _ from "lodash";
-class Deck {
+class DataPart {
   #shuffledCards;
+  #allPiles;
 
   constructor() {
     this.#shuffledCards = [];
+    this.#allPiles = {};
   }
   generateCards() {
     const cards = [];
@@ -26,15 +28,6 @@ class Deck {
   get shuffledCards() {
     return this.#shuffledCards;
   }
-}
-
-class Tableau {
-  #allPiles;
-  #shuffledCards;
-  constructor(shuffledCards) {
-    this.#allPiles = {};
-    this.#shuffledCards = shuffledCards;
-  }
   setupTableau() {
     for (let column = 1; column <= 10; column++) {
       const spliceCount = column < 5 ? 6 : 5;
@@ -42,7 +35,13 @@ class Tableau {
       splicedArray.at(-1).isFaceUp = true;
       this.#allPiles[`pile${column}`] = splicedArray;
     }
-    console.log(this.#allPiles);
+  }
+}
+
+class ViewPart {
+  #allPiles;
+  constructor() {
+    this.#allPiles = {};
   }
 
   displayTableau() {
@@ -62,7 +61,7 @@ class Tableau {
   }
 }
 
-class Game {
+class ControllerPart {
   #tableau;
   constructor(tableau) {
     this.#tableau = tableau;
@@ -111,11 +110,9 @@ const userMoves = () => {
   return [fromPile, toPile, noOfCards];
 };
 
-const playGame = (deck, tableau) => {
-  const game = new Game(tableau);
+const playGame = (tableau) => {
+  const game = new ControllerPart(tableau);
 
-  //   allPiles.pile1[4].isFaceUp = true;
-  //   allPiles.pile1[3].isFaceUp = true;
   tableau.displayTableau();
   const [from, to, noOfCards] = userMoves();
 
@@ -129,10 +126,10 @@ const playGame = (deck, tableau) => {
 };
 
 const main = () => {
-  const deck = new Deck();
+  const deck = new DataPart();
   deck.generateCards();
   deck.shuffleCards();
-  const tableau = new Tableau(deck.shuffledCards);
+  const tableau = new ViewPart(deck.shuffledCards);
   tableau.setupTableau();
   tableau.displayTableau();
   playGame(deck, tableau);
